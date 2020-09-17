@@ -1,10 +1,11 @@
 from torch import nn
+from collections import OrderedDict
 
 
 class ResnetBlock(nn.Module):
     def __init__(self, dim: int, dropout: float):
         super().__init__()
-        layers = {
+        layers = OrderedDict({
             "padding": nn.ReflectionPad2d(1),
             "conv": nn.Conv2d(
                 in_channels=dim, out_channels=dim, kernel_size=3
@@ -12,7 +13,7 @@ class ResnetBlock(nn.Module):
             "norm": nn.BatchNorm2d(dim),
             "drop": nn.Dropout(dropout),
             "activ": nn.ReLU(),
-        }
+        })
         self.layers = nn.ModuleDict(layers)
 
     def forward(self, inp):
@@ -30,7 +31,7 @@ class Generator(nn.Module):
         dropout: float = 0.0,
     ):
         super().__init__()
-        layers = {
+        layers = OrderedDict({
             "inp_layers": nn.Sequential(
                 nn.ReflectionPad2d(3),
                 nn.Conv2d(
@@ -41,7 +42,7 @@ class Generator(nn.Module):
                 nn.BatchNorm2d(hidden_channel_dim),
                 nn.ReLU(True),
             )
-        }
+        })
         # downsampling
         for i in range(2):
             cur_inp_dim = 2 ** i * hidden_channel_dim
@@ -66,7 +67,7 @@ class Generator(nn.Module):
             cur_inp_dim = 4 * hidden_channel_dim / 2 ** i
             layers[f"upsampling_{i+1}"] = nn.Sequential(
                 nn.ConvTranspose2d(
-                    in_channels=cur_inp_dim,
+                    in_channels=int(cur_inp_dim),
                     out_channels=int(cur_inp_dim / 2),
                     kernel_size=3,
                     stride=2,
@@ -89,7 +90,9 @@ class Generator(nn.Module):
 
     def forward(self, inp):
         x = inp.clamp(-1, 1)
-        return self.layers(x)
+        for _k, layer in self.layers.items():
+            x = layer(x)
+        return x
 
 
 __all__ = ["Generator"]
