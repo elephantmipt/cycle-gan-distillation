@@ -124,7 +124,7 @@ class DiscriminatorLoss(Callback):
         generated = runner.buffers[manifold].get(
             runner.output[f"generated_{manifold}"]
         )
-        pred_generated = discriminator(generated)
+        pred_generated = discriminator(generated.detach())
         loss_generated = runner.criterion["gan"](pred_generated, False)
         return (loss_generated + loss_real) / 2
 
