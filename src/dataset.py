@@ -34,3 +34,6 @@ class UnpairedDataset(Dataset):
         img_a = self.transforms(torch.load(path_to_file_a))
         img_b = self.transforms(torch.load(path_to_file_b))
         return {"real_a": img_a, "real_b": img_b}
+
+    def __len__(self):
+        return max(self.len_b, self.len_a)
