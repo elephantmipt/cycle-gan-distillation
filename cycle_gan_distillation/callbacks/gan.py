@@ -1,10 +1,9 @@
 from typing import List
 
+from catalyst.core import Callback, CallbackOrder, IRunner
 import torch
 
 from ..runner import CycleGANRunner
-
-from catalyst.core import Callback, CallbackOrder, IRunner
 
 
 class PrepareGeneratorPhase(Callback):
@@ -12,9 +11,7 @@ class PrepareGeneratorPhase(Callback):
         super().__init__(CallbackOrder.Internal)
 
     def on_batch_end(self, runner: "CycleGANRunner") -> None:
-        runner.set_requires_grad(
-            ["discriminator_a", "discriminator_b"], False
-        )
+        runner.set_requires_grad(["discriminator_a", "discriminator_b"], False)
 
 
 class IdenticalGANLoss(Callback):
@@ -22,6 +19,7 @@ class IdenticalGANLoss(Callback):
     Generates identical objects (i.e. feed to Generator_AB object from B space)
     and then counts identical loss.
     """
+
     def __init__(self, lambda_a: float = 1, lambda_b: float = 1):
         super().__init__(CallbackOrder.Internal + 1)
         self.lambda_a = lambda_a
@@ -30,8 +28,12 @@ class IdenticalGANLoss(Callback):
     def on_batch_end(self, runner: "IRunner") -> None:
         identical_b = runner.model["generator_ab"](runner.input["real_b"])
         identical_a = runner.model["generator_ba"](runner.input["real_a"])
-        loss_id_b = runner.criterion["identical"](identical_b, runner.input["real_b"])
-        loss_id_a = runner.criterion["identical"](identical_a, runner.input["real_a"])
+        loss_id_b = runner.criterion["identical"](
+            identical_b, runner.input["real_b"]
+        )
+        loss_id_a = runner.criterion["identical"](
+            identical_a, runner.input["real_a"]
+        )
         loss_id = self.lambda_a * loss_id_a + self.lambda_b * loss_id_b
         runner.batch_metrics["identical_loss"] = loss_id
 
@@ -53,8 +55,9 @@ class CycleGANLoss(Callback):
         loss_b = runner.criterion["cycle"](
             runner.output["reconstructed_b"], runner.input["real_b"]
         )
-        runner.batch_metrics["cycle_loss"] = \
+        runner.batch_metrics["cycle_loss"] = (
             self.lambda_a * loss_a + self.lambda_b * loss_b
+        )
 
 
 class GANLoss(Callback):
@@ -74,8 +77,9 @@ class GANLoss(Callback):
         loss_b = runner.criterion["gan"](
             runner.model["discriminator_a"](runner.output["generated_a"])
         )
-        runner.batch_metrics["gan_loss"] = \
+        runner.batch_metrics["gan_loss"] = (
             self.lambda_a * loss_a + self.lambda_b * loss_b
+        )
 
 
 class GeneratorOptimizerCallback(Callback):
@@ -102,30 +106,33 @@ class PrepareDiscriminatorPhase(Callback):
         super().__init__(CallbackOrder.Internal + 3)
 
     def on_batch_end(self, runner: "CycleGANRunner") -> None:
-        runner.set_requires_grad(
-            ["discriminator_a", "discriminator_b"], True
-        )
+        runner.set_requires_grad(["discriminator_a", "discriminator_b"], True)
 
 
 class DiscriminatorLoss(Callback):
     def __init__(self):
         super().__init__(CallbackOrder.Internal + 4)
 
-    def _get_loss(self, manifold: str, runner: "CycleGANRunner") -> torch.Tensor:
+    def _get_loss(
+        self, manifold: str, runner: "CycleGANRunner"
+    ) -> torch.Tensor:
         discriminator = runner.model[f"discriminator_{manifold}"]
 
         pred_real = discriminator(runner.input[f"real_{manifold}"])
         loss_real = runner.criterion["gan"](pred_real, True)
 
-        generated = runner.buffers[manifold].get(runner.output[f"generated_{manifold}"])
+        generated = runner.buffers[manifold].get(
+            runner.output[f"generated_{manifold}"]
+        )
         pred_generated = discriminator(generated)
         loss_generated = runner.criterion["gan"](pred_generated, False)
         return (loss_generated + loss_real) / 2
 
     def on_batch_end(self, runner: "CycleGANRunner") -> None:
         for manifold in ["a", "b"]:
-            runner.batch_metrics[f"discriminator_{manifold}_loss"] = \
-                self._get_loss(manifold=manifold, runner=runner)
+            runner.batch_metrics[
+                f"discriminator_{manifold}_loss"
+            ] = self._get_loss(manifold=manifold, runner=runner)
 
 
 class DiscriminatorOptimizerCallback(Callback):

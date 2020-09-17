@@ -1,4 +1,4 @@
-from typing import Any, Mapping, List
+from typing import Any, List, Mapping
 
 from catalyst import dl
 import torch
