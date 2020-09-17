@@ -1,4 +1,4 @@
-from typing import Any, Mapping
+from typing import Any, Mapping, List
 
 from catalyst import dl
 import torch
@@ -8,9 +8,13 @@ from .utils import Storage
 
 class CycleGANRunner(dl.Runner):
     def __init__(self, buffer_size: int = 1000, *args, **kwargs):
-        self.buffer_a = Storage(buffer_size)
-        self.buffer_b = Storage(buffer_size)
+        self.buffers = {"a": Storage(buffer_size), "b": Storage(buffer_size)}
         super().__init__(*args, **kwargs)
+
+    def set_requires_grad(self, model_keys: List[str], req: bool):
+        for key in model_keys:
+            for param in self.model[key].parameters():
+                param.requires_grad = req
 
     def _generate(self, batch):
         self.output = {
