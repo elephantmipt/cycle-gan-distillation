@@ -20,12 +20,14 @@ class Storage:
                 if np.random.uniform() < self.p:
                     idx_to_replace = np.random.randint(self.storage_size)
                     current_batch.append(
-                        self._data[idx_to_replace].clone().to(device)
+                        self._data[idx_to_replace].clone()
                     )
                     self._data[idx_to_replace] = image.cpu()
                 else:
                     current_batch.append(image)
-        return torch.cat(current_batch, dim=0)
+        for i in range(len(current_batch)):
+            current_batch[i] = current_batch[i].to(device)
+        return torch.cat(current_batch, dim=0).to(device)
 
 
 __all__ = ["Storage"]
