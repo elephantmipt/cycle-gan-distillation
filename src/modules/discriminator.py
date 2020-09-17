@@ -3,7 +3,7 @@ from collections import OrderedDict
 from torch import nn
 
 
-class PatchDiscriminator(nn.Module):
+class Discriminator(nn.Module):
     def __init__(self, input_channel_dim: int, hidden_channel_dim: int = 64):
         super().__init__()
         layers = OrderedDict([
@@ -34,4 +34,4 @@ class PatchDiscriminator(nn.Module):
         return self.layers(inp)
 
 
-__all__ = ["PatchDiscriminator"]
+__all__ = ["Discriminator"]

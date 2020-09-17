@@ -83,8 +83,12 @@ class GANLoss(Callback):
 
 
 class GeneratorOptimizerCallback(Callback):
-    def __init__(self, keys: List[str], weights: List[float]):
+    def __init__(self, keys: List[str] = None, weights: List[float] = None):
         super().__init__(CallbackOrder.Internal + 2)
+        if keys is None:
+            keys = ["gan_loss", "cycle_loss", "identity_loss"]
+        if weights is None:
+            weights = [1 for _ in range(3)]
         assert len(keys) == len(weights)
         self.keys = keys
         self.weights = weights
@@ -136,8 +140,12 @@ class DiscriminatorLoss(Callback):
 
 
 class DiscriminatorOptimizerCallback(Callback):
-    def __init__(self, keys: List[str], weights: List[float]):
+    def __init__(self, keys: List[str] = None, weights: List[float] = None):
         super().__init__(CallbackOrder.Internal + 5)
+        if keys is None:
+            keys = ["discriminator_a_loss", "discriminator_b_loss"]
+        if weights is None:
+            weights = [1 for _ in range(2)]
         assert len(keys) == len(weights)
         self.keys = keys
         self.weights = weights
