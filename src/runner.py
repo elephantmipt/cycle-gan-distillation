@@ -16,7 +16,7 @@ class CycleGANRunner(dl.Runner):
             for param in self.model[key].parameters():
                 param.requires_grad = req
 
-    def _generate(self, batch):
+    def _handle_batch(self, batch: Mapping[str, Any]) -> None:
         self.output = {
             "generated_b": self.model["generator_ab"](batch["real_a"]),
             "generated_a": self.model["generator_ba"](batch["real_b"]),
