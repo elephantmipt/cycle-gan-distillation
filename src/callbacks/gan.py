@@ -72,10 +72,12 @@ class GANLoss(Callback):
 
     def on_batch_end(self, runner: "IRunner") -> None:
         loss_a = runner.criterion["gan"](
-            runner.model["discriminator_b"](runner.output["generated_b"])
+            runner.model["discriminator_b"](runner.output["generated_b"]),
+            False
         )
         loss_b = runner.criterion["gan"](
-            runner.model["discriminator_a"](runner.output["generated_a"])
+            runner.model["discriminator_a"](runner.output["generated_a"]),
+            False
         )
         runner.batch_metrics["gan_loss"] = (
             self.lambda_a * loss_a + self.lambda_b * loss_b
