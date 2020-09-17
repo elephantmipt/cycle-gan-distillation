@@ -88,7 +88,7 @@ class GeneratorOptimizerCallback(Callback):
     def __init__(self, keys: List[str] = None, weights: List[float] = None):
         super().__init__(CallbackOrder.Internal + 2)
         if keys is None:
-            keys = ["gan_loss", "cycle_loss", "identity_loss"]
+            keys = ["gan_loss", "cycle_loss", "identical_loss"]
         if weights is None:
             weights = [1 for _ in range(3)]
         assert len(keys) == len(weights)
@@ -101,7 +101,7 @@ class GeneratorOptimizerCallback(Callback):
     def on_batch_end(self, runner: "IRunner") -> None:
         loss = 0
         for key, weight in zip(self.keys, self.weights):
-            loss += weight * runner.output[key]
+            loss += weight * runner.batch_metrics[key]
         loss.backward()
         runner.batch_metrics["generator_loss"] = loss
         runner.optimizer["generator"].step()
@@ -158,7 +158,7 @@ class DiscriminatorOptimizerCallback(Callback):
     def on_batch_end(self, runner: "IRunner") -> None:
         loss = 0
         for key, weight in zip(self.keys, self.weights):
-            loss += weight * runner.output[key]
+            loss += weight * runner.batch_metrics[key]
         loss.backward()
         runner.batch_metrics["discriminator_loss"] = loss
         runner.optimizer["discriminator"].step()
