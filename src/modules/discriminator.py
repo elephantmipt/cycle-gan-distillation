@@ -25,7 +25,7 @@ class Discriminator(nn.Module):
                 nn.LeakyReLU(0.2, True),
             )),
             ("classifier", nn.Conv2d(
-                in_channels=hidden_channel_dim, out_channels=1, kernel_size=1,
+                in_channels=hidden_channel_dim*2, out_channels=1, kernel_size=1,
             )),
         ])
         self.layers = nn.Sequential(layers)
