@@ -36,6 +36,7 @@ class PixelDiscriminator(nn.Module):
 
 class NLayerDiscriminator(nn.Module):
     def __init__(self, inp_channels=3, n_layers=3, hidden_channels_dim=64):
+        super().__init__()
         layers = OrderedDict([("inp_layer", nn.Sequential(
             nn.Conv2d(in_channels=inp_channels, out_channels=hidden_channels_dim, kernel_size=4, stride=2, padding=1),
             nn.LeakyReLU(0.2, True)
