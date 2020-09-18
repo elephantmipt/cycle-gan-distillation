@@ -1,3 +1,4 @@
+import torch
 from catalyst.core import Callback, CallbackOrder, IRunner
 
 from catalyst.dl import utils
@@ -18,8 +19,8 @@ class LogImageCallback(Callback):
             logger = tb_callback.loggers[runner.loader_name]
             generator = runner.model["generator_ba"]
             imgs = next(iter(runner.loaders["train"]))["real_b"]
-            generator.eval()
-            generated_img = generator(imgs)[0].cpu()
+            with torch.no_grad():
+                generated_img = generator(imgs)[0].cpu()
             pil_img = T.ToPILImage()(generated_img)
             self._log_to_tensorboard(pil_img, logger, runner.global_batch_step)
 
