@@ -21,7 +21,7 @@ class PixelDiscriminator(nn.Module):
         for i in range(1, 4):
             prev_dim = current_dim
             current_dim *= 2
-            layers[f"conv_{i}"] = nn.Sequential(
+            layers[f"conv_{i+1}"] = nn.Sequential(
                 nn.Conv2d(
                     in_channels=prev_dim,
                     out_channels=current_dim,
