@@ -18,7 +18,7 @@ class LogImageCallback(Callback):
             tb_callback = runner.callbacks["_tensorboard"]
             logger = tb_callback.loggers[runner.loader_name]
             generator = runner.model["generator_ba"]
-            imgs = next(iter(runner.loaders["train"]))["real_b"]
+            imgs = next(iter(runner.loaders["train"]))["real_b"].to(runner.device)
             with torch.no_grad():
                 generated_img = generator(imgs)[0].cpu()
             pil_img = T.ToPILImage()(generated_img)
