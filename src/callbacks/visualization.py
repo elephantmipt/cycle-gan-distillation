@@ -14,7 +14,7 @@ class LogImageCallback(Callback):
         self.log_period = log_period
 
     def on_batch_end(self, runner: "IRunner"):
-        if runner.global_batch_step % self.log_period:
+        if runner.global_batch_step % self.log_period == 0:
             tb_callback = runner.callbacks["_tensorboard"]
             logger = tb_callback.loggers[runner.loader_name]
             generator = runner.model["generator_ba"]
