@@ -16,8 +16,7 @@ def main(args):
         os.mkdir(cur_folder + "_preprocessed")
         progress_folder = tqdm(sorted(os.listdir(cur_folder)), leave=False)
         for file in progress_folder:
-            img = cv2.imread(cur_folder + "/" + file)
-            img = Image.fromarray(img)
+            img = Image.open(cur_folder + "/" + file)
             torch.save(img, cur_folder + "_preprocessed/" + file[:-4] + ".pkl")
 
 
