@@ -9,10 +9,12 @@ from torchvision import transforms as T
 
 
 class LogImageCallback(Callback):
-    def __init__(self, log_period: int = 400):
+    def __init__(self, log_period: int = 400, img=None, key="generated"):
         super().__init__(CallbackOrder.External)
         self.log_period = log_period
         self.iter_num = 0
+        self.img = None
+        self.key = key
 
     def on_batch_end(self, runner: "IRunner"):
         self.iter_num += 1
@@ -20,9 +22,14 @@ class LogImageCallback(Callback):
             tb_callback = runner.callbacks["_tensorboard"]
             logger = tb_callback.loggers[runner.loader_name]
             generator = runner.model["generator_ba"]
-            imgs = next(iter(runner.loaders["train"]))["real_b"].to(runner.device)
-            with torch.no_grad():
-                generated_img = generator(imgs)[0].cpu()
+            if self.img is not None:
+                img = self.img.to(runner.device).unsqueeze(0)
+                with torch.no_grad():
+                    generated_img = generator(img)[0].cpu()
+            else:
+                imgs = next(iter(runner.loaders["train"]))["real_b"].to(runner.device)
+                with torch.no_grad():
+                    generated_img = generator(imgs)[0].cpu()
             pil_img = T.ToPILImage()(generated_img)
             self._log_to_tensorboard(pil_img, logger, runner.global_batch_step)
 
@@ -30,4 +37,4 @@ class LogImageCallback(Callback):
         fig = plt.figure(figsize=(10, 10))
         plt.imshow(image)
         fig = utils.render_figure_to_tensor(fig)
-        logger.add_image(f"latent_space/epoch", fig, global_step=step)
+        logger.add_image(self.key, fig, global_step=step)

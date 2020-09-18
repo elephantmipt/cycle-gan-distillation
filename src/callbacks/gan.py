@@ -90,7 +90,7 @@ class GeneratorOptimizerCallback(Callback):
         if keys is None:
             keys = ["gan_loss", "cycle_loss", "identical_loss"]
         if weights is None:
-            weights = [1 for _ in range(3)]
+            weights = [1. for _ in range(2)] + [0.1]
         assert len(keys) == len(weights)
         self.keys = keys
         self.weights = weights
