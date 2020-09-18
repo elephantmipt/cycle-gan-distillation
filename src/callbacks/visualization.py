@@ -8,7 +8,7 @@ from torchvision import transforms as T
 
 
 class LogImageCallback(Callback):
-    def __init__(self, log_period: int=400):
+    def __init__(self, log_period: int = 400):
         super().__init__(CallbackOrder.External)
         self.log_period = log_period
 
