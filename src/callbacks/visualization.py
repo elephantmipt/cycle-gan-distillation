@@ -13,7 +13,7 @@ class LogImageCallback(Callback):
         super().__init__(CallbackOrder.External)
         self.log_period = log_period
         self.iter_num = 0
-        self.img = None
+        self.img = img
         self.key = key
 
     def on_batch_end(self, runner: "IRunner"):

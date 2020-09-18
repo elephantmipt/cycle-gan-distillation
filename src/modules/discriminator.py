@@ -11,23 +11,33 @@ class PixelDiscriminator(nn.Module):
                 nn.Conv2d(
                     in_channels=input_channel_dim,
                     out_channels=hidden_channel_dim,
-                    kernel_size=1,  # haha, classic
+                    kernel_size=4,
+                    stride=2,
                 ),
                 nn.LeakyReLU(0.2, True),
-            )),
-            ("conv_2", nn.Sequential(
-                nn.Conv2d(
-                    in_channels=hidden_channel_dim,
-                    out_channels=hidden_channel_dim * 2,
-                    kernel_size=1,
-                ),
-                nn.BatchNorm2d(hidden_channel_dim * 2),
-                nn.LeakyReLU(0.2, True),
-            )),
-            ("classifier", nn.Conv2d(
-                in_channels=hidden_channel_dim*2, out_channels=1, kernel_size=1,
             )),
         ])
+        current_dim = hidden_channel_dim
+        for i in range(1, 4):
+            prev_dim = current_dim
+            current_dim *= 2
+            layers[f"conv_{i}"] = nn.Sequential(
+                nn.Conv2d(
+                    in_channels=prev_dim,
+                    out_channels=current_dim,
+                    kernel_size=4,
+                    stride=2
+                ),
+                nn.LeakyReLU(0.2, True),
+            )
+        layers["conv_5"] = nn.Sequential(
+            nn.Conv2d(
+                in_channels=current_dim,
+                out_channels=1,
+                kernel_size=4,
+                stride=2,
+            )
+        )
         self.layers = nn.Sequential(layers)
 
     def forward(self, inp):
