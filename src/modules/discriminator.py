@@ -44,7 +44,7 @@ class PixelDiscriminator(nn.Module):
         if return_hidden:
             x = inp
             hiddens = []
-            for _name, layer in self.layers.items():
+            for _name, layer in self.layers.named_children():
                 x = layer(x)
                 hiddens.append(x)
             return x, hiddens

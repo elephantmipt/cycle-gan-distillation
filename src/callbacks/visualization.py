@@ -9,19 +9,20 @@ from torchvision import transforms as T
 
 
 class LogImageCallback(Callback):
-    def __init__(self, log_period: int = 400, img=None, key="generated"):
+    def __init__(self, log_period: int = 400, img=None, key="generated", model_key: str = "generator_ba"):
         super().__init__(CallbackOrder.External)
         self.log_period = log_period
         self.iter_num = 0
         self.img = img
         self.key = key
+        self.model_key = model_key
 
     def on_batch_end(self, runner: "IRunner"):
         self.iter_num += 1
         if self.iter_num % self.log_period == 0:
             tb_callback = runner.callbacks["_tensorboard"]
             logger = tb_callback.loggers[runner.loader_name]
-            generator = runner.model["generator_ba"]
+            generator = runner.model[self.model_key]
             if self.img is not None:
                 img = self.img.to(runner.device).unsqueeze(0)
                 with torch.no_grad():

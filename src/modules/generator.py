@@ -92,7 +92,7 @@ class Generator(nn.Module):
         x = inp.clamp(-1, 1)
         hiddens = []
         if return_hidden:
-            for name, layer in self.layers.items():
+            for name, layer in self.layers.named_children():
                 x = layer(x)
                 if "res" in name:
                     hiddens.append(x)
