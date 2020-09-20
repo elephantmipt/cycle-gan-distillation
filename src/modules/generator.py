@@ -88,8 +88,15 @@ class Generator(nn.Module):
         )
         self.layers = nn.Sequential(layers)
 
-    def forward(self, inp):
+    def forward(self, inp, return_hidden=False):
         x = inp.clamp(-1, 1)
+        hiddens = []
+        if return_hidden:
+            for name, layer in self.layers.items():
+                x = layer(x)
+                if "res" in name:
+                    hiddens.append(x)
+            return x, hiddens
         return self.layers(x)
 
 

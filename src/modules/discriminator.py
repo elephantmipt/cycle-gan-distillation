@@ -40,7 +40,14 @@ class PixelDiscriminator(nn.Module):
         )
         self.layers = nn.Sequential(layers)
 
-    def forward(self, inp):
+    def forward(self, inp, return_hidden=False):
+        if return_hidden:
+            x = inp
+            hiddens = []
+            for _name, layer in self.layers.items():
+                x = layer(x)
+                hiddens.append(x)
+            return x, hiddens
         return self.layers(inp)
 
 

@@ -20,14 +20,15 @@ class IdenticalGANLoss(Callback):
     and then counts identical loss.
     """
 
-    def __init__(self, lambda_a: float = 1, lambda_b: float = 1):
+    def __init__(self, lambda_a: float = 1, lambda_b: float = 1, ba_key: str = "generator_ba"):
         super().__init__(CallbackOrder.Internal + 1)
         self.lambda_a = lambda_a
         self.lambda_b = lambda_b
+        self.ba_key = ba_key
 
     def on_batch_end(self, runner: "IRunner") -> None:
         identical_b = runner.model["generator_ab"](runner.input["real_b"])
-        identical_a = runner.model["generator_ba"](runner.input["real_a"])
+        identical_a = runner.model[self.ba_key](runner.input["real_a"])
         loss_id_b = runner.criterion["identical"](
             identical_b, runner.input["real_b"]
         )
