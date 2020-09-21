@@ -1,0 +1,91 @@
+# Refer to configs/config-description-eng.yml
+# for detailed comments on this configuration file
+model_params:
+  _key_value: true
+  generator_ab:
+    model: Generator
+    inp_channel_dim: 3
+    out_channel_dim: 3
+    n_blocks: 9
+  generator_ba:
+    model: Generator
+    inp_channel_dim: 3
+    out_channel_dim: 3
+    n_blocks: 9
+  discriminator_a:
+    model: PixelDiscrinator
+    inp_channel_dim: 3
+  discriminator_b:
+    model: PixelDiscrinator
+    inp_channel_dim: 3
+
+args:
+  # where to look for __init__.py file
+  expdir: "src/experiments/train"
+  # store logs in this subfolder
+  baselogdir: "./logs/train"
+
+# common settings for all stages
+stages:
+  # PyTorch loader params
+  data_params:
+    path_a: "./datasets/monet2photo/trainA"
+    path_b: "./datasets/monet2photo/trainB"
+
+  state_params:
+    main_metric: cycle_loss
+    minimize_metric: True
+
+  # callbacks serve to calculate loss and metric,
+  # update model weights, save checkpoint etc.
+  callbacks_params:
+    prepare_generator:
+      callback: PrepareGeneratorPhase
+    gan_loss:
+      callback: GANLoss
+    cycle_gan_loss:
+      callback: CycleGANLoss
+    identical_loss:
+      callback: IdenticalGANLoss
+    generator_optimizer_callback:
+      callback: GeneratorOptimizerCallback
+      weights:
+        - 1
+        - 10
+        - 5
+    prepare_discriminator:
+      callback: PrepareDiscriminatorPhase
+    discriminator_loss:
+      callback: DiscriminatorLoss
+    discriminator_optimizer_callback:
+      callback: DiscriminatorOptimizerCallback
+    log_img_1:
+      callback: LogImageCallback
+    log_img_2:
+      callback: LogImageCallback
+      img: "./datasets/vk.jpg"
+      key: vk
+    log_img_3:
+      callback: LogImageCallback
+      img: "./datasets/mipt.jpg"
+      key: mipt
+
+  # params specific for stage 1 called "train_val"
+  train:
+    state_params:
+      num_epochs: 100
+    optimizer_params:
+      key_value: true
+      generator:
+        optimizer: Adam
+        lr: 0.0002
+        model_key:
+          - generator_ab
+          - generator_ba
+        optimizer_key: generator
+      discriminator:
+        optimizer: Adam
+        lr: 0.0002
+        model_key:
+          - discriminator_a
+          - discriminator_b

@@ -1,7 +1,6 @@
 import argparse
 import os
 
-import cv2
 from PIL import Image
 import torch
 from tqdm import tqdm

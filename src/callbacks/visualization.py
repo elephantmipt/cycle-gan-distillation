@@ -7,15 +7,26 @@ from matplotlib import pyplot as plt
 
 from torchvision import transforms as T
 
+from PIL import Image
+
+from pathlib import Path
+
 
 class LogImageCallback(Callback):
     def __init__(self, log_period: int = 400, img=None, key="generated", model_key: str = "generator_ba"):
         super().__init__(CallbackOrder.External)
         self.log_period = log_period
         self.iter_num = 0
-        self.img = img
         self.key = key
         self.model_key = model_key
+        if isinstance(img, str):
+            transforms = T.Compose([
+                T.Resize(256, 256),
+                T.ToTensor(),
+            ])
+            img = Image.open(Path(img))
+            img = transforms(img)
+        self.img = img
 
     def on_batch_end(self, runner: "IRunner"):
         self.iter_num += 1
