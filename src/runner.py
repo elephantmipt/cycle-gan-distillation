@@ -7,7 +7,7 @@ from .utils import Storage
 
 
 class CycleGANRunner(dl.Runner):
-    def __init__(self, buffer_size: int = 1000, *args, **kwargs):
+    def __init__(self, buffer_size: int = 50, *args, **kwargs):
         self.buffers = {"a": Storage(buffer_size), "b": Storage(buffer_size)}
         super().__init__(*args, **kwargs)
 

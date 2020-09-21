@@ -25,6 +25,9 @@ args:
   # store logs in this subfolder
   baselogdir: "./logs/train"
 
+data_params:
+  batch_size: 1
+
 # common settings for all stages
 stages:
   # PyTorch loader params
@@ -35,6 +38,7 @@ stages:
   state_params:
     main_metric: cycle_loss
     minimize_metric: True
+    valid_loader: train
 
   # callbacks serve to calculate loss and metric,
   # update model weights, save checkpoint etc.
