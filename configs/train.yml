@@ -14,10 +14,10 @@ model_params:
     n_blocks: 9
   discriminator_a:
     model: PixelDiscriminator
-    inp_channel_dim: 3
+    input_channel_dim: 3
   discriminator_b:
     model: PixelDiscriminator
-    inp_channel_dim: 3
+    input_channel_dim: 3
 
 args:
   # where to look for __init__.py file
