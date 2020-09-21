@@ -82,7 +82,6 @@ stages:
         model_key:
           - generator_ab
           - generator_ba
-        optimizer_key: generator
       discriminator:
         optimizer: Adam
         lr: 0.0002
