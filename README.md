@@ -22,7 +22,23 @@ $$
 L_{\text{generator}} = \lambda_1 L_{\text{gan}} + \lambda_2 L_{\text{cycle}} + \lambda_3L_{\text{identical}}
 $$
 
+![](.gitbook/assets/loss-diagram.png)
+
 ### Proposed distillation method
 
+Full generator has about 6 million parameters.
 
+![Teacher Generator](.gitbook/assets/nn-1-.svg)
+
+Proposed student generator has 3 res-blocks instead of 9, it reduces the number of parameters by a half!
+
+![Student Generator](.gitbook/assets/nn-4-.svg)
+
+I transfer downsampling and upsampling layers from teacher network \(yellow arrows\). Also I add L2-loss between hidden states of the student and teacher network \(purple arrows\) and L1-loss between output of teacher and student.
+
+![Distillation scheme](.gitbook/assets/untitled-diagram-1-.png)
+
+So the full pipeline looks like:
+
+![](.gitbook/assets/distilling-diagram.png)
 
