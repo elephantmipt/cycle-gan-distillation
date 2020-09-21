@@ -21,7 +21,7 @@ class LogImageCallback(Callback):
         self.model_key = model_key
         if isinstance(img, str):
             transforms = T.Compose([
-                T.Resize(256, 256),
+                T.Resize((256, 256)),
                 T.ToTensor(),
             ])
             img = Image.open(Path(img))
