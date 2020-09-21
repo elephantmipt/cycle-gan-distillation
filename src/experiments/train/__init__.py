@@ -35,3 +35,5 @@ registry.Callback(DiscriminatorLoss)
 registry.Callback(DiscriminatorOptimizerCallback)
 
 registry.Callback(LogImageCallback)
+
+registry.Runner(Runner)
