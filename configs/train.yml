@@ -23,7 +23,7 @@ args:
   # where to look for __init__.py file
   expdir: "src/experiments/train"
   # store logs in this subfolder
-  baselogdir: "./logs/train"
+  baselogdir: "./log_train/train"
 
 data_params:
   batch_size: 1
