@@ -15,3 +15,8 @@ class Experiment(ConfigExperiment):
         ])
         dataset = UnpairedDataset(path_a=path_a, path_b=path_b, transforms=transforms)
         return OrderedDict([("train", dataset)])
+
+    def get_callbacks(self, *args, **kwargs):
+        callbacks = super().get_callbacks(*args, **kwargs)
+        del callbacks["_optimizer"]
+        return callbacks
