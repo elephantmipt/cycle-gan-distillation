@@ -8,8 +8,8 @@ class Experiment(ConfigExperiment):
 
     def get_datasets(self, stage, path_a, path_b):
         transforms = T.Compose([
-            T.Resize(300, 300),
-            T.RandomCrop(256, 256),
+            T.Resize((300, 300)),
+            T.RandomCrop((256, 256)),
             T.RandomHorizontalFlip(),
             T.ToTensor()
         ])
