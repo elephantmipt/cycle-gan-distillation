@@ -1,2 +1,2 @@
-# cycle-gan-distillation
-Trying to distillate gan.
+# Initial page
+
