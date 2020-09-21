@@ -32,8 +32,8 @@ data_params:
 stages:
   # PyTorch loader params
   data_params:
-    path_a: "./datasets/monet2photo/trainA"
-    path_b: "./datasets/monet2photo/trainB"
+    path_a: "./datasets/monet2photo/trainA_preprocessed"
+    path_b: "./datasets/monet2photo/trainB_preprocessed"
 
   state_params:
     main_metric: cycle_loss
