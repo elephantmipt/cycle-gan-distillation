@@ -13,10 +13,10 @@ model_params:
     out_channel_dim: 3
     n_blocks: 9
   discriminator_a:
-    model: PixelDiscrinator
+    model: PixelDiscriminator
     inp_channel_dim: 3
   discriminator_b:
-    model: PixelDiscrinator
+    model: PixelDiscriminator
     inp_channel_dim: 3
 
 args:
