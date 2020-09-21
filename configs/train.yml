@@ -75,7 +75,7 @@ stages:
     state_params:
       num_epochs: 100
     optimizer_params:
-      key_value: true
+      _key_value: true
       generator:
         optimizer: Adam
         lr: 0.0002
