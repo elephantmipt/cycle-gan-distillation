@@ -1,22 +1,20 @@
 from catalyst.dl import registry
-
 from src.callbacks.gan import (
     CycleGANLoss,
-    GANLoss,
-    IdenticalGANLoss,
-    PrepareGeneratorPhase,
-    GeneratorOptimizerCallback,
-    PrepareDiscriminatorPhase,
     DiscriminatorLoss,
-    DiscriminatorOptimizerCallback
+    DiscriminatorOptimizerCallback,
+    GANLoss,
+    GeneratorOptimizerCallback,
+    IdenticalGANLoss,
+    PrepareDiscriminatorPhase,
+    PrepareGeneratorPhase,
 )
-
-from src.modules.generator import Generator
-from src.modules.discriminator import PixelDiscriminator, NLayerDiscriminator
 from src.callbacks.visualization import LogImageCallback
-from src.runner import CycleGANRunner as Runner
-from src.modules.loss import LSGanLoss
 from src.experiments.train.train_experiment import Experiment
+from src.modules.discriminator import NLayerDiscriminator, PixelDiscriminator
+from src.modules.generator import Generator
+from src.modules.loss import LSGanLoss
+from src.runner import CycleGANRunner as Runner
 
 registry.Model(Generator)
 registry.Model(PixelDiscriminator)

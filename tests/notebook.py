@@ -1,32 +1,28 @@
-import torch
+from itertools import chain
 
 from src.callbacks.gan import (
     CycleGANLoss,
-    GANLoss,
-    IdenticalGANLoss,
-    PrepareGeneratorPhase,
-    GeneratorOptimizerCallback,
-    PrepareDiscriminatorPhase,
     DiscriminatorLoss,
-    DiscriminatorOptimizerCallback
+    DiscriminatorOptimizerCallback,
+    GANLoss,
+    GeneratorOptimizerCallback,
+    IdenticalGANLoss,
+    PrepareDiscriminatorPhase,
+    PrepareGeneratorPhase,
 )
 from src.dataset import UnpairedDataset
-from src.modules.generator import Generator
 from src.modules.discriminator import Discriminator
-from src.runner import CycleGANRunner
+from src.modules.generator import Generator
 from src.modules.loss import LSGanLoss
+from src.runner import CycleGANRunner
+import torch
 
 train_ds = UnpairedDataset(
     "./datasets/monet2photo/trainA_preprocessed",
-    "./datasets/monet2photo/trainB_preprocessed"
+    "./datasets/monet2photo/trainB_preprocessed",
 )
-train_dl = torch.utils.data.DataLoader(
-    train_ds,
-    batch_size=1,
-    shuffle=True
-)
+train_dl = torch.utils.data.DataLoader(train_ds, batch_size=1, shuffle=True)
 
-from itertools import chain
 
 model = {
     "generator_ab": Generator(3, 3),
@@ -38,15 +34,15 @@ optimizer = {
     "generator": torch.optim.Adam(
         chain(
             model["generator_ab"].parameters(),
-            model["generator_ba"].parameters()
+            model["generator_ba"].parameters(),
         )
     ),
     "discriminator": torch.optim.Adam(
         chain(
             model["discriminator_a"].parameters(),
-            model["discriminator_b"].parameters()
+            model["discriminator_b"].parameters(),
         )
-    )
+    ),
 }
 callbacks = [
     PrepareGeneratorPhase(),
@@ -66,7 +62,7 @@ criterion = {
 }
 
 runner = CycleGANRunner(device="cpu")
-#import ipdb; ipdb.set_trace()
+# import ipdb; ipdb.set_trace()
 runner.train(
     model=model,
     optimizer=optimizer,
@@ -75,5 +71,5 @@ runner.train(
     criterion=criterion,
     check=True,
     verbose=True,
-    main_metric="identical_loss"
+    main_metric="identical_loss",
 )

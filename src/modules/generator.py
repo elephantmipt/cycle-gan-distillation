@@ -1,19 +1,25 @@
-from torch import nn
 from collections import OrderedDict
+
+from torch import nn
 
 
 class ResnetBlock(nn.Module):
     def __init__(self, dim: int, dropout: float):
         super().__init__()
-        layers = OrderedDict([
-            ("padding", nn.ReflectionPad2d(1)),
-            ("conv", nn.Conv2d(
-                in_channels=dim, out_channels=dim, kernel_size=3
-            )),
-            ("norm", nn.BatchNorm2d(dim)),
-            ("drop", nn.Dropout(dropout)),
-            ("activ", nn.ReLU()),
-        ])
+        layers = OrderedDict(
+            [
+                ("padding", nn.ReflectionPad2d(1)),
+                (
+                    "conv",
+                    nn.Conv2d(
+                        in_channels=dim, out_channels=dim, kernel_size=3
+                    ),
+                ),
+                ("norm", nn.BatchNorm2d(dim)),
+                ("drop", nn.Dropout(dropout)),
+                ("activ", nn.ReLU()),
+            ]
+        )
         self.layers = nn.Sequential(layers)
 
     def forward(self, inp):
@@ -31,18 +37,23 @@ class Generator(nn.Module):
         dropout: float = 0.0,
     ):
         super().__init__()
-        layers = OrderedDict([
-            ("inp_layers", nn.Sequential(
-                nn.ReflectionPad2d(3),
-                nn.Conv2d(
-                    in_channels=inp_channel_dim,
-                    out_channels=hidden_channel_dim,
-                    kernel_size=7,
+        layers = OrderedDict(
+            [
+                (
+                    "inp_layers",
+                    nn.Sequential(
+                        nn.ReflectionPad2d(3),
+                        nn.Conv2d(
+                            in_channels=inp_channel_dim,
+                            out_channels=hidden_channel_dim,
+                            kernel_size=7,
+                        ),
+                        nn.BatchNorm2d(hidden_channel_dim),
+                        nn.ReLU(True),
+                    ),
                 ),
-                nn.BatchNorm2d(hidden_channel_dim),
-                nn.ReLU(True),
-            )),
-        ])
+            ]
+        )
         # downsampling
         for i in range(2):
             cur_inp_dim = 2 ** i * hidden_channel_dim

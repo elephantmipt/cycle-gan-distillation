@@ -19,9 +19,7 @@ class Storage:
             else:
                 if np.random.uniform() < self.p:
                     idx_to_replace = np.random.randint(self.storage_size)
-                    current_batch.append(
-                        self._data[idx_to_replace].clone()
-                    )
+                    current_batch.append(self._data[idx_to_replace].clone())
                     self._data[idx_to_replace] = image.cpu()
                 else:
                     current_batch.append(image)

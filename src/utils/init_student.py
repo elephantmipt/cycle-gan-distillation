@@ -1,5 +1,6 @@
-import torch
 from typing import Dict
+
+import torch
 
 
 def preprocess_sd(sd):
@@ -9,7 +10,9 @@ def preprocess_sd(sd):
     return preprocessed
 
 
-def initialize_pretrained(path: str, model: Dict[str, torch.nn.Module]):
+def initialize_pretrained(
+    path: str, model: Dict[str, torch.nn.Module]
+) -> None:
     state_dict = torch.load(path)
     for model_key in state_dict["model_state_dict"].keys():
         preprocessed_sd = state_dict["model_state_dict"][model_key]
@@ -20,3 +23,15 @@ def initialize_pretrained(path: str, model: Dict[str, torch.nn.Module]):
                 state_dict["model_state_dict"][model_key]
             )
             model[model_key].load_state_dict(preprocessed_sd)
+
+
+def transfer_student(path: str, model: Dict[str, torch.nn.Module]) -> None:
+    state_dict = torch.load(path)
+    student_state_dict = {}
+    for layer_name, weights in state_dict.items():
+        if "sampling" in layer_name:
+            if "module" in layer_name:
+                student_state_dict[layer_name[7:]] = weights
+            else:
+                student_state_dict[layer_name] = weights
+    model["student_t"].load_state_dict(student_state_dict, strict=False)
