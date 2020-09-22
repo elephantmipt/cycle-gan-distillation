@@ -13,7 +13,7 @@ class VGG(nn.Module):
     def forward(self, x):
         slices = [1, 6, 11, 20, 29]
         features = []
-        for idx, layer in enumerate(self.layers.chidren()):
+        for idx, layer in enumerate(self.layers.children()):
             x = layer(x)
             if idx in slices:
                 features.append(x)
