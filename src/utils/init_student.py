@@ -13,6 +13,7 @@ def preprocess_sd(sd):
 def initialize_pretrained(
     path: str, model: Dict[str, torch.nn.Module]
 ) -> None:
+    """Initialize all models, that was in state dict  with pretrained weights"""
     state_dict = torch.load(path)
     for model_key in state_dict["model_state_dict"].keys():
         preprocessed_sd = state_dict["model_state_dict"][model_key]
@@ -25,7 +26,9 @@ def initialize_pretrained(
             model[model_key].load_state_dict(preprocessed_sd)
 
 
-def transfer_student(path: str, model: Dict[str, torch.nn.Module], student_key="generator_s") -> None:
+def transfer_student(
+        path: str, model: Dict[str, torch.nn.Module], student_key="generator_s"
+) -> None:
     state_dict = torch.load(path)
     student_state_dict = {}
     for layer_name, weights in state_dict.items():

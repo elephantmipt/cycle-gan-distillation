@@ -4,20 +4,27 @@ from torch import nn
 
 
 class ResnetBlock(nn.Module):
-    def __init__(self, dim: int, dropout: float):
+    def __init__(self, dim: int):
         super().__init__()
         layers = OrderedDict(
             [
-                ("padding", nn.ReflectionPad2d(1)),
+                ("padding_1", nn.ReflectionPad2d(1)),
                 (
-                    "conv",
+                    "conv_1",
                     nn.Conv2d(
                         in_channels=dim, out_channels=dim, kernel_size=3
                     ),
                 ),
-                ("norm", nn.BatchNorm2d(dim)),
-                ("drop", nn.Dropout(dropout)),
-                ("activ", nn.ReLU()),
+                ("norm_1", nn.BatchNorm2d(dim, affine=False)),
+                ("activation", nn.ReLU(True)),
+                ("padding_2", nn.ReflectionPad2d(1)),
+                (
+                    "conv_2",
+                    nn.Conv2d(
+                        in_channels=dim, out_channels=dim, kernel_size=3
+                    ),
+                ),
+                ("norm_2", nn.BatchNorm2d(dim, affine=False)),
             ]
         )
         self.layers = nn.Sequential(layers)
@@ -48,7 +55,7 @@ class Generator(nn.Module):
                             out_channels=hidden_channel_dim,
                             kernel_size=7,
                         ),
-                        nn.BatchNorm2d(hidden_channel_dim),
+                        nn.BatchNorm2d(hidden_channel_dim, affine=False),
                         nn.ReLU(True),
                     ),
                 ),
@@ -65,13 +72,13 @@ class Generator(nn.Module):
                     stride=2,
                     padding=1,
                 ),
-                nn.BatchNorm2d(cur_inp_dim * 2),
+                nn.BatchNorm2d(cur_inp_dim * 2, affine=False),
                 nn.ReLU(True),
             )
         # res_blocks
         for i in range(n_blocks):
             layers[f"res_block_{i+1}"] = ResnetBlock(
-                dim=4 * hidden_channel_dim, dropout=dropout
+                dim=4 * hidden_channel_dim
             )
         # upsampling
         for i in range(2):
@@ -85,7 +92,7 @@ class Generator(nn.Module):
                     padding=1,
                     output_padding=1,
                 ),
-                nn.BatchNorm2d(int(cur_inp_dim / 2)),
+                nn.BatchNorm2d(int(cur_inp_dim / 2), affine=False),
                 nn.ReLU(True),
             )
         layers["out_layers"] = nn.Sequential(
