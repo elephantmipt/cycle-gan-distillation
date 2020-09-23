@@ -163,12 +163,18 @@ I spend about day to somehow improve teacher quality. I find that in official Cy
 | :--- | :--- |
 |  ![](.gitbook/assets/snimok-ekrana-2020-09-23-v-21.35.05.png)  | ![](.gitbook/assets/snimok-ekrana-2020-09-23-v-22.29.01%20%281%29.png)  |
 
-Interesting that it is a kinda similar to[ layer visualizations](https://distill.pub/2017/feature-visualization/) in convolutional networks.  
+Interesting that it is a kinda similar to[ layer visualizations](https://distill.pub/2017/feature-visualization/) in convolution networks.  
 I tried to tune it, but even with big weight for identical loss I failed to remove this color inversions.
 
 ### Artifacts
 
 I faced with two types of artifact the first is red or green points on the dark parts of images:
 
+![](.gitbook/assets/snimok-ekrana-2020-09-23-v-23.55.09.png)
 
+And chessboard artifact on the sky:
+
+![](.gitbook/assets/snimok-ekrana-2020-09-23-v-23.43.26.png)
+
+And if the first artifact is not a problem at all. I just need to train my network for more epochs, the chessboard artifact is annoying and I can't handle it with increasing number of iterations. So I found post [here](https://distill.pub/2016/deconv-checkerboard/) which explains problem and suggests to use upsample with convolution. Now I'm trying to train teacher with this trick.
 
