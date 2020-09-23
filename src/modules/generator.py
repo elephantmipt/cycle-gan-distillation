@@ -2,6 +2,25 @@ from collections import OrderedDict
 
 from torch import nn
 
+class UpConv(nn.Module):
+    """Upsampling without chessboard artifacts"""
+    def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0, output_padding=0):
+        self.layers = nn.Sequential(
+            nn.Upsample(scale_factor=2, mode='bilinear'),
+            nn.ReflectionPad2d(padding),
+            nn.Conv2d(
+                in_channels=in_channels,
+                out_channels=out_channels,
+                kernel_size=kernel_size,
+                stride=stride,
+                bias=False,
+            ),
+            nn.ReflectionPad2d(output_padding),
+        )
+
+    def forward(self, x):
+        return self.layers(x)
+
 
 class ResnetBlock(nn.Module):
     def __init__(self, dim: int):
@@ -12,19 +31,19 @@ class ResnetBlock(nn.Module):
                 (
                     "conv_1",
                     nn.Conv2d(
-                        in_channels=dim, out_channels=dim, kernel_size=3
+                        in_channels=dim, out_channels=dim, kernel_size=3, bias=False
                     ),
                 ),
-                ("norm_1", nn.BatchNorm2d(dim, affine=True)),
+                ("norm_1", nn.BatchNorm2d(dim)),
                 ("activation", nn.ReLU(True)),
                 ("padding_2", nn.ReflectionPad2d(1)),
                 (
                     "conv_2",
                     nn.Conv2d(
-                        in_channels=dim, out_channels=dim, kernel_size=3
+                        in_channels=dim, out_channels=dim, kernel_size=3, bias=False
                     ),
                 ),
-                ("norm_2", nn.BatchNorm2d(dim, affine=True)),
+                ("norm_2", nn.BatchNorm2d(dim)),
             ]
         )
         self.layers = nn.Sequential(layers)
@@ -54,8 +73,9 @@ class Generator(nn.Module):
                             in_channels=inp_channel_dim,
                             out_channels=hidden_channel_dim,
                             kernel_size=7,
+                            bias=False
                         ),
-                        nn.BatchNorm2d(hidden_channel_dim, affine=True),
+                        nn.BatchNorm2d(hidden_channel_dim),
                         nn.ReLU(True),
                     ),
                 ),
@@ -71,8 +91,9 @@ class Generator(nn.Module):
                     kernel_size=3,
                     stride=2,
                     padding=1,
+                    bias=False
                 ),
-                nn.BatchNorm2d(cur_inp_dim * 2, affine=True),
+                nn.BatchNorm2d(cur_inp_dim * 2),
                 nn.ReLU(True),
             )
         # res_blocks
@@ -84,7 +105,7 @@ class Generator(nn.Module):
         for i in range(2):
             cur_inp_dim = 4 * hidden_channel_dim / 2 ** i
             layers[f"upsampling_{i+1}"] = nn.Sequential(
-                nn.ConvTranspose2d(
+                UpConv(
                     in_channels=int(cur_inp_dim),
                     out_channels=int(cur_inp_dim / 2),
                     kernel_size=3,
@@ -92,7 +113,7 @@ class Generator(nn.Module):
                     padding=1,
                     output_padding=1,
                 ),
-                nn.BatchNorm2d(int(cur_inp_dim / 2), affine=True),
+                nn.BatchNorm2d(int(cur_inp_dim / 2)),
                 nn.ReLU(True),
             )
         layers["out_layers"] = nn.Sequential(
