@@ -27,9 +27,9 @@ def initialize_pretrained(
 
 
 def transfer_student(
-        path: str, model: Dict[str, torch.nn.Module], student_key="generator_s"
+        path: str, model: Dict[str, torch.nn.Module], student_key="generator_s", teacher_key="generator_ba",
 ) -> None:
-    state_dict = torch.load(path)
+    state_dict = torch.load(path)["model_state_dict"][teacher_key]
     student_state_dict = {}
     for layer_name, weights in state_dict.items():
         if "sampling" in layer_name:
