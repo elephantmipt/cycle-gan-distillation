@@ -25,7 +25,7 @@ def initialize_pretrained(
             model[model_key].load_state_dict(preprocessed_sd)
 
 
-def transfer_student(path: str, model: Dict[str, torch.nn.Module]) -> None:
+def transfer_student(path: str, model: Dict[str, torch.nn.Module], student_key="generator_s") -> None:
     state_dict = torch.load(path)
     student_state_dict = {}
     for layer_name, weights in state_dict.items():
@@ -34,4 +34,4 @@ def transfer_student(path: str, model: Dict[str, torch.nn.Module]) -> None:
                 student_state_dict[layer_name[7:]] = weights
             else:
                 student_state_dict[layer_name] = weights
-    model["student_t"].load_state_dict(student_state_dict, strict=False)
+    model[student_key].load_state_dict(student_state_dict, strict=False)
