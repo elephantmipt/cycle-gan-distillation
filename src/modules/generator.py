@@ -15,7 +15,7 @@ class ResnetBlock(nn.Module):
                         in_channels=dim, out_channels=dim, kernel_size=3
                     ),
                 ),
-                ("norm_1", nn.BatchNorm2d(dim, affine=False)),
+                ("norm_1", nn.BatchNorm2d(dim, affine=True)),
                 ("activation", nn.ReLU(True)),
                 ("padding_2", nn.ReflectionPad2d(1)),
                 (
@@ -24,7 +24,7 @@ class ResnetBlock(nn.Module):
                         in_channels=dim, out_channels=dim, kernel_size=3
                     ),
                 ),
-                ("norm_2", nn.BatchNorm2d(dim, affine=False)),
+                ("norm_2", nn.BatchNorm2d(dim, affine=True)),
             ]
         )
         self.layers = nn.Sequential(layers)
@@ -55,7 +55,7 @@ class Generator(nn.Module):
                             out_channels=hidden_channel_dim,
                             kernel_size=7,
                         ),
-                        nn.BatchNorm2d(hidden_channel_dim, affine=False),
+                        nn.BatchNorm2d(hidden_channel_dim, affine=True),
                         nn.ReLU(True),
                     ),
                 ),
@@ -72,7 +72,7 @@ class Generator(nn.Module):
                     stride=2,
                     padding=1,
                 ),
-                nn.BatchNorm2d(cur_inp_dim * 2, affine=False),
+                nn.BatchNorm2d(cur_inp_dim * 2, affine=True),
                 nn.ReLU(True),
             )
         # res_blocks
@@ -92,7 +92,7 @@ class Generator(nn.Module):
                     padding=1,
                     output_padding=1,
                 ),
-                nn.BatchNorm2d(int(cur_inp_dim / 2), affine=False),
+                nn.BatchNorm2d(int(cur_inp_dim / 2), affine=True),
                 nn.ReLU(True),
             )
         layers["out_layers"] = nn.Sequential(
