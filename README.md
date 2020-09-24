@@ -1,5 +1,31 @@
 # Cycle GAN Distillation
 
+### tl;dr
+
+You can start teacher training with
+
+```text
+git clone https://github.com/elephantmipt/cycle-gan-distillation.git
+bash bin/download_dataset.sh monet2photo
+pip install -r requierements/requirements.txt
+python scripts/preprocess_dataset.py --path ./datasets/monet2photo
+python train.py
+```
+
+After training you can start distillation with
+
+```text
+python distil.py
+```
+
+Read these sections for more info:
+
+{% page-ref page="how-to-use/training.md" %}
+
+{% page-ref page="how-to-use/distillation.md" %}
+
+
+
 ### What is Cycle GAN?
 
 Let's start with defining general task, that GAN should be able to solve. Imagine we have a data from space A and we have a data from space B. We need to learn mapping from space A to space B. For example in vanilla GAN we the data in the A space is a gaussian noise and data from B space is a handwritten digits \(MNIST\). So after training we can generate digits out of gaussian noise. First proposed method is minimizing Janson-Shanon divergence between generated data and real data in space B. But in the LSGAN paper it was shown that minimizing Chi-2 divergence works slightly better.
