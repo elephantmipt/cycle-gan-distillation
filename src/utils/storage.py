@@ -3,12 +3,27 @@ import torch
 
 
 class Storage:
-    def __init__(self, storage_size, p: float = 0.5):
+    def __init__(self, storage_size: int, p: float = 0.5):
+        """
+        Temporary storage for images.
+        Args:
+            storage_size: size of the buffer
+            p: probability of swapping images
+        """
         self._data = []
         self.storage_size = storage_size
         self.p = p
 
-    def get(self, images: torch.Tensor):
+    def get(self, images: torch.Tensor) -> torch.Tensor:
+        """
+        Forms batch for discriminator.
+
+        Args:
+            images: batch from generator
+
+        Returns:
+            batch for discriminator
+        """
         current_batch = []
         device = images.device
         for image in images:

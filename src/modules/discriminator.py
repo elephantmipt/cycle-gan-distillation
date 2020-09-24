@@ -1,10 +1,25 @@
+from typing import List, Tuple, Union
 from collections import OrderedDict
 
+import torch
 from torch import nn
 
 
 class PixelDiscriminator(nn.Module):
+    """
+    Pixel Discriminator proposed in Pix2Pix model.
+    """
+
     def __init__(self, input_channel_dim: int, hidden_channel_dim: int = 64):
+        """
+        Pixel Discriminator proposed in Pix2Pix model.
+
+        Args:
+            input_channel_dim: number of channels in inp image.
+            hidden_channel_dim: number of channels after first conv.
+                The max number of chennels will be 4*hidden_channel_dim.
+        """
+
         super().__init__()
         layers = OrderedDict(
             [
@@ -45,7 +60,20 @@ class PixelDiscriminator(nn.Module):
         )
         self.layers = nn.Sequential(layers)
 
-    def forward(self, inp, return_hidden=False):
+    def forward(
+        self, inp, return_hidden=False
+    ) -> Union[torch.Tensor, Tuple[torch.Tensor, List[torch.Tensor]]]:
+        """
+        Forward method.
+
+        Args:
+            inp: input tensor
+            return_hidden:  flag.
+                If true will return also hidden states of conv layers.
+
+        Returns:
+
+        """
         if return_hidden:
             x = inp
             hiddens = []
@@ -57,7 +85,16 @@ class PixelDiscriminator(nn.Module):
 
 
 class NLayerDiscriminator(nn.Module):
-    def __init__(self, inp_channels=3, n_layers=3, hidden_channels_dim=64):
+    """
+    Simple conv discriminator.
+    """
+
+    def __init__(
+        self,
+        inp_channels: int = 3,
+        n_layers: int = 3,
+        hidden_channels_dim: int = 64,
+    ):
         super().__init__()
         layers = OrderedDict(
             [
