@@ -1,0 +1,4 @@
+torch
+catalyst>=20.09
+torchvision
+Pillow

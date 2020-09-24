@@ -1,4 +1,4 @@
-from typing import Callable, List
+from typing import List
 
 from catalyst.core import Callback, CallbackOrder, IRunner
 import torch
